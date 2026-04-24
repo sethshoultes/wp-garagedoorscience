@@ -203,6 +203,101 @@
   font-size: 0.92rem;
 }
 
+/* --- partner lookup after matched diagnosis --- */
+
+.gds-widget .gds-partner-lookup {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--gds-border);
+}
+
+.gds-widget .gds-partner-lookup h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+}
+
+.gds-widget .gds-zip-form {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.5rem 0 0.75rem;
+  flex-wrap: wrap;
+}
+
+.gds-widget .gds-zip-input {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--gds-border);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 1rem;
+  background: #fff;
+  color: var(--gds-text);
+}
+
+.gds-widget .gds-zip-input:focus {
+  outline: 2px solid var(--gds-accent);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+.gds-widget .gds-zip-submit {
+  padding: 0.55rem 1.1rem;
+  background: var(--gds-accent);
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease;
+}
+
+.gds-widget .gds-zip-submit:hover { background: var(--gds-accent-hover); }
+.gds-widget .gds-zip-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.gds-widget .gds-partner {
+  margin-top: 0.5rem;
+  padding: 1rem;
+  background: #fafafa;
+  border: 1px solid var(--gds-border);
+  border-radius: 6px;
+}
+
+.gds-widget .gds-partner h4 {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+}
+
+.gds-widget .gds-partner p {
+  margin: 0.25rem 0;
+  font-size: 0.92rem;
+}
+
+.gds-widget .gds-partner a {
+  color: var(--gds-accent);
+}
+
+.gds-widget .gds-cta {
+  display: inline-block;
+  margin-top: 0.6rem;
+  padding: 0.55rem 1.1rem;
+  background: var(--gds-accent);
+  color: #fff;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.92rem;
+  transition: background 0.15s ease;
+}
+
+.gds-widget .gds-cta:hover {
+  background: var(--gds-accent-hover);
+  color: #fff;
+  text-decoration: none;
+}
+
 .gds-widget p.gds-footer {
   margin: 1.25rem 0 0;
   font-size: 0.78rem;
