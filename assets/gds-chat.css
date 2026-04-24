@@ -1,0 +1,161 @@
+/**
+ * Garage Door Science — Diagnostic Chat widget styles
+ *
+ * Scoped to .gds-widget so they don't collide with theme styles.
+ * Uses CSS custom properties for the accent color so future per-instance
+ * overrides are trivial.
+ */
+
+.gds-widget {
+  --gds-accent: #d4541a;
+  --gds-accent-hover: #b8471a;
+  --gds-text: #1a1a18;
+  --gds-muted: #6b7280;
+  --gds-border: #e5e7eb;
+  --gds-surface: #ffffff;
+  --gds-danger: #c0392b;
+  --gds-danger-bg: #fee;
+
+  box-sizing: border-box;
+  max-width: 560px;
+  margin: 1.5rem 0;
+  padding: 1.5rem 1.75rem;
+  background: var(--gds-surface);
+  border: 1px solid var(--gds-border);
+  border-radius: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  line-height: 1.55;
+  color: var(--gds-text);
+}
+
+.gds-widget *, .gds-widget *::before, .gds-widget *::after {
+  box-sizing: border-box;
+}
+
+.gds-widget h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.4rem;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.gds-widget p.lede {
+  margin: 0 0 1rem;
+  color: var(--gds-muted);
+  font-size: 0.95rem;
+}
+
+.gds-widget textarea.gds-input {
+  display: block;
+  width: 100%;
+  min-height: 80px;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--gds-border);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  resize: vertical;
+  background: #fff;
+  color: var(--gds-text);
+}
+
+.gds-widget textarea.gds-input:focus {
+  outline: 2px solid var(--gds-accent);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+.gds-widget button.gds-submit {
+  margin-top: 0.65rem;
+  padding: 0.55rem 1.15rem;
+  background: var(--gds-accent);
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.3;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease;
+}
+
+.gds-widget button.gds-submit:hover { background: var(--gds-accent-hover); }
+.gds-widget button.gds-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.gds-widget .gds-results { margin-top: 1.25rem; }
+
+.gds-widget .gds-issue {
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--gds-border);
+  border-radius: 6px;
+  margin-bottom: 0.65rem;
+  background: #fafafa;
+}
+
+.gds-widget .gds-issue h3 {
+  margin: 0 0 0.3rem;
+  font-size: 1rem;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.gds-widget .gds-issue .meta {
+  margin: 0.2rem 0 0.4rem;
+  font-size: 0.85rem;
+  color: var(--gds-muted);
+}
+
+.gds-widget .gds-issue p { margin: 0.4rem 0; font-size: 0.92rem; }
+
+.gds-widget .gds-issue .unsafe {
+  display: inline-block;
+  padding: 0.1rem 0.45rem;
+  background: var(--gds-danger-bg);
+  color: var(--gds-danger);
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.gds-widget .gds-issue .safety {
+  margin-top: 0.4rem;
+  padding: 0.4rem 0.65rem;
+  background: var(--gds-danger-bg);
+  border-left: 3px solid var(--gds-danger);
+  border-radius: 4px;
+  font-size: 0.88rem;
+}
+
+.gds-widget .gds-nomatch {
+  padding: 0.9rem 1rem;
+  background: #fafafa;
+  border: 1px solid var(--gds-border);
+  border-radius: 6px;
+  color: var(--gds-muted);
+  font-size: 0.92rem;
+}
+
+.gds-widget p.gds-footer {
+  margin: 1.25rem 0 0;
+  font-size: 0.78rem;
+  color: var(--gds-muted);
+  text-align: center;
+}
+
+.gds-widget p.gds-footer a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--gds-border);
+}
+
+.gds-widget p.gds-footer a:hover {
+  color: var(--gds-accent);
+  text-decoration-color: currentColor;
+}
