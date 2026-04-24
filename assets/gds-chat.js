@@ -68,13 +68,21 @@
 
   function render(results, container) {
     container.replaceChildren();
-    if (!results.issues || results.issues.length === 0) {
+    var issues = results.likelyIssues || [];
+    var urgency = results.symptom && results.symptom.urgency;
+    if (issues.length === 0) {
       var hint = results.hint || CFG.hintFallback || 'No exact match yet — try describing what you see or hear.';
       container.appendChild(el('div', { class: 'gds-nomatch', text: hint }));
       return;
     }
-    for (var i = 0; i < results.issues.length; i++) {
-      container.appendChild(renderIssue(results.issues[i], results.urgency));
+    if (results.safetyFlag) {
+      container.appendChild(el('div', { class: 'safety' },
+        el('strong', { text: 'Safety: ' }),
+        'This looks like something that needs a pro. Do not attempt to repair stored-energy components (springs, cables) yourself.'
+      ));
+    }
+    for (var i = 0; i < issues.length; i++) {
+      container.appendChild(renderIssue(issues[i], urgency));
     }
   }
 
