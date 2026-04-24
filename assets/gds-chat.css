@@ -45,6 +45,67 @@
   font-size: 0.95rem;
 }
 
+/* --- chip mode --- */
+
+.gds-widget .gds-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.25rem 0 0.5rem;
+}
+
+.gds-widget .gds-chip {
+  padding: 0.45rem 0.9rem;
+  background: var(--gds-surface);
+  border: 1px solid var(--gds-border);
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: var(--gds-text);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.gds-widget .gds-chip:hover {
+  border-color: var(--gds-accent);
+  color: var(--gds-accent);
+  background: #fffaf6;
+}
+
+.gds-widget .gds-chip:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.gds-widget .gds-toggle {
+  display: inline-block;
+  margin-top: 0.6rem;
+  padding: 0;
+  color: var(--gds-accent);
+  text-decoration: underline;
+  text-decoration-color: rgba(0, 0, 0, 0.15);
+  font-size: 0.86rem;
+  font-family: inherit;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+}
+
+.gds-widget .gds-toggle:hover {
+  text-decoration-color: currentColor;
+}
+
+.gds-widget [hidden] { display: none !important; }
+
+.gds-widget .safety-banner {
+  margin: 0 0 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--gds-danger-bg);
+  border-left: 3px solid var(--gds-danger);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
 .gds-widget textarea.gds-input {
   display: block;
   width: 100%;

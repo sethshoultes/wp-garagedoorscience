@@ -2,10 +2,11 @@
 /**
  * Shortcode: [gds-diagnose]
  *
- * Renders the diagnostic widget inline. Supports attribute overrides so
- * editors can tune per-page copy without visiting the settings screen.
+ * Renders the diagnostic widget inline. Default mode shows symptom chips
+ * so users pick from a known-matching vocabulary. A toggle link reveals
+ * a free-text input for descriptions that don't fit a chip.
  *
- *   [gds-diagnose heading="Having trouble?" cta="Check my door"]
+ *   [gds-diagnose heading="Having trouble?"]
  *
  * @package gds-chat
  */
@@ -14,33 +15,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Render the widget.
- *
- * @param array $atts Shortcode attributes.
- * @return string HTML output.
- */
 function gds_chat_shortcode( $atts ) {
 	$atts = shortcode_atts(
 		array(
 			'heading' => '',
-			'lede'    => '',
-			'cta'     => '',
 		),
 		$atts,
 		'gds-diagnose'
 	);
 
-	// Attribute overrides win over the stored settings; fall back to the
-	// runtime config (which already pulls from options + applies filters).
 	$config = gds_chat_get_runtime_config();
 	$heading = ! empty( $atts['heading'] ) ? $atts['heading'] : $config['heading'];
-	$lede    = ! empty( $atts['lede'] ) ? $atts['lede'] : $config['lede'];
-	$cta     = ! empty( $atts['cta'] ) ? $atts['cta'] : $config['cta'];
 
 	gds_chat_enqueue_on_demand();
 
-	// Unique instance id so multiple widgets on one page don't collide.
 	static $instance = 0;
 	$instance++;
 	$id = 'gds-chat-' . $instance;
@@ -49,18 +37,36 @@ function gds_chat_shortcode( $atts ) {
 	?>
 	<div class="gds-widget" data-gds-instance="<?php echo esc_attr( $id ); ?>">
 		<h2><?php echo esc_html( $heading ); ?></h2>
-		<p class="lede"><?php echo esc_html( $lede ); ?></p>
-		<textarea
-			class="gds-input"
-			placeholder="<?php echo esc_attr__( "My door opens fine but won't close all the way. Sometimes it reverses when it gets near the ground.", 'gds-chat' ); ?>"
-			rows="4"
-			aria-label="<?php echo esc_attr__( 'Describe your garage door problem', 'gds-chat' ); ?>"
-		></textarea>
-		<button type="button" class="gds-submit"><?php echo esc_html( $cta ); ?></button>
+
+		<div class="gds-chips-view">
+			<p class="lede"><?php esc_html_e( "Pick the closest match to what's happening:", 'gds-chat' ); ?></p>
+			<div class="gds-chips" role="group" aria-label="<?php esc_attr_e( 'Common symptoms', 'gds-chat' ); ?>"></div>
+			<button type="button" class="gds-toggle" data-gds-target="text">
+				<?php esc_html_e( "Don't see it? Describe it in your own words →", 'gds-chat' ); ?>
+			</button>
+		</div>
+
+		<div class="gds-text-view" hidden>
+			<p class="lede"><?php esc_html_e( 'Describe what\'s happening in your own words:', 'gds-chat' ); ?></p>
+			<textarea
+				class="gds-input"
+				placeholder="<?php echo esc_attr__( "My door opens fine but won't close all the way. Sometimes it reverses when it gets near the ground.", 'gds-chat' ); ?>"
+				rows="4"
+				aria-label="<?php esc_attr_e( 'Describe your garage door problem', 'gds-chat' ); ?>"
+			></textarea>
+			<div>
+				<button type="button" class="gds-submit"><?php echo esc_html( $config['cta'] ); ?></button>
+			</div>
+			<div>
+				<button type="button" class="gds-toggle" data-gds-target="chips">
+					<?php esc_html_e( '← Pick from common symptoms instead', 'gds-chat' ); ?>
+				</button>
+			</div>
+		</div>
+
 		<div class="gds-results" role="region" aria-live="polite"></div>
 		<p class="gds-footer">
 			<?php
-			// Footer with hyperlink to gds.
 			printf(
 				/* translators: %s: link to garagedoorscience.com */
 				esc_html__( 'Powered by %s', 'gds-chat' ),

@@ -1,9 +1,9 @@
 /**
  * Garage Door Science — Diagnostic Chat widget
  *
- * Uses safe DOM builders (document.createElement + textContent)
- * rather than innerHTML with templated strings, so user-provided
- * content can't inject HTML.
+ * Default view: symptom chips (pre-matched to diagnostic-tree aliases).
+ * Toggle link reveals a free-text input for descriptions that don't fit
+ * a chip. Uses safe DOM builders (createElement + textContent) throughout.
  */
 (function () {
   'use strict';
@@ -11,6 +11,20 @@
   var CFG = (typeof window.GDS_CHAT_CONFIG === 'object' && window.GDS_CHAT_CONFIG) || {};
   var API_BASE = CFG.apiBase || 'https://garagedoorscience.com/api/v1';
   var BEARER = CFG.bearer || '';
+
+  // Pre-matched symptom list. Each `phrase` is a canonical alias known
+  // to match in the server-side diagnostic tree. Update if the tree changes.
+  var SYMPTOMS = [
+    { key: 'wont_open',            label: "Won't open",              phrase: "won't open" },
+    { key: 'wont_close',           label: "Won't close",             phrase: "won't close" },
+    { key: 'loud_grinding',        label: 'Grinding noise',          phrase: 'grinding noise' },
+    { key: 'banging_noise',        label: 'Loud bang or reverses',   phrase: 'loud bang' },
+    { key: 'moves_unevenly',       label: 'Moves unevenly',          phrase: 'moves unevenly' },
+    { key: 'opens_partially',      label: 'Opens partway',           phrase: 'opens partially' },
+    { key: 'remote_not_working',   label: 'Remote not working',      phrase: 'remote not working' },
+    { key: 'unusual_noise',        label: 'Noisy or squeaky',        phrase: 'loud noise' },
+    { key: 'weather_seal_damaged', label: 'Weather seal damaged',    phrase: 'weather seal damaged' }
+  ];
 
   function el(tag, props) {
     var node = document.createElement(tag);
@@ -71,12 +85,12 @@
     var issues = results.likelyIssues || [];
     var urgency = results.symptom && results.symptom.urgency;
     if (issues.length === 0) {
-      var hint = results.hint || CFG.hintFallback || 'No exact match yet — try describing what you see or hear.';
+      var hint = results.hint || CFG.hintFallback || 'No exact match — try a different symptom or phrase.';
       container.appendChild(el('div', { class: 'gds-nomatch', text: hint }));
       return;
     }
     if (results.safetyFlag) {
-      container.appendChild(el('div', { class: 'safety' },
+      container.appendChild(el('div', { class: 'safety-banner' },
         el('strong', { text: 'Safety: ' }),
         'This looks like something that needs a pro. Do not attempt to repair stored-energy components (springs, cables) yourself.'
       ));
@@ -90,35 +104,66 @@
     if (widget.dataset.gdsBound === '1') return;
     widget.dataset.gdsBound = '1';
 
+    var chipsContainer = widget.querySelector('.gds-chips');
+    var chipsView = widget.querySelector('.gds-chips-view');
+    var textView = widget.querySelector('.gds-text-view');
     var input = widget.querySelector('.gds-input');
-    var btn = widget.querySelector('.gds-submit');
+    var submitBtn = widget.querySelector('.gds-submit');
     var results = widget.querySelector('.gds-results');
 
-    if (!input || !btn || !results) return;
+    if (!chipsContainer || !results) return;
 
-    var originalLabel = btn.textContent;
-
-    btn.addEventListener('click', function () {
-      var desc = (input.value || '').trim();
-      if (!desc) return;
-      btn.disabled = true;
-      btn.textContent = CFG.loading || 'Thinking…';
+    function submit(description, activeBtn, originalLabel) {
+      activeBtn.disabled = true;
+      activeBtn.textContent = CFG.loading || 'Thinking…';
       results.replaceChildren();
-      diagnose(desc)
+      diagnose(description)
         .then(function (data) { render(data, results); })
         .catch(function (err) {
           results.replaceChildren(el('div', { class: 'gds-nomatch', text: CFG.errorMsg || 'Something went wrong. Try again.' }));
           console.error(err);
         })
         .then(function () {
-          btn.disabled = false;
-          btn.textContent = originalLabel;
+          activeBtn.disabled = false;
+          activeBtn.textContent = originalLabel;
         });
-    });
+    }
 
-    input.addEventListener('keydown', function (e) {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') btn.click();
-    });
+    // Build chips
+    for (var i = 0; i < SYMPTOMS.length; i++) {
+      (function (s) {
+        var chip = el('button', { type: 'button', class: 'gds-chip', 'data-key': s.key }, s.label);
+        chip.addEventListener('click', function () { submit(s.phrase, chip, s.label); });
+        chipsContainer.appendChild(chip);
+      })(SYMPTOMS[i]);
+    }
+
+    // Toggle between chips and text modes
+    var toggles = widget.querySelectorAll('.gds-toggle');
+    for (var j = 0; j < toggles.length; j++) {
+      (function (toggle) {
+        toggle.addEventListener('click', function () {
+          var target = toggle.getAttribute('data-gds-target');
+          if (chipsView) chipsView.hidden = target !== 'chips';
+          if (textView) textView.hidden = target !== 'text';
+          results.replaceChildren();
+          if (target === 'text' && input) input.focus();
+        });
+      })(toggles[j]);
+    }
+
+    // Text-mode submit
+    if (submitBtn && input) {
+      var originalLabel = submitBtn.textContent;
+      submitBtn.addEventListener('click', function () {
+        var desc = (input.value || '').trim();
+        if (!desc) return;
+        submit(desc, submitBtn, originalLabel);
+      });
+      input.addEventListener('keydown', function (e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') submitBtn.click();
+      });
+    }
   }
 
   function boot() {
